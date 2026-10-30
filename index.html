@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EasyStore — Quick Goods Order</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-50 text-slate-900 min-h-full flex flex-col font-sans antialiased">
+
+    <!-- 1. Top Announcement & Utility Bar -->
+    <div class="bg-slate-900 text-slate-200 text-xs border-b border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 flex flex-wrap items-center justify-between gap-2">
+            <div class="flex items-center space-x-3">
+                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1.5 animate-pulse"></span>
+                    Open for Orders
+                </span>
+                <span class="hidden sm:inline text-slate-400">|</span>
+                <!-- <span class="text-slate-300"><i class="fa-solid fa-bolt text-amber-400 mr-1"></i>Instant WhatsApp confirmation & same-day dispatch</span> -->
+            </div>
+            <div class="flex items-center space-x-4 text-slate-300">
+                <span class="hidden md:inline"><i class="fa-regular fa-clock mr-1 text-emerald-400"></i>Mon – Sat: 8:00 AM – 8:00 PM</span>
+                <a href="#catalog-section" class="hover:text-white underline underline-offset-2 font-medium">Browse Catalog</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. Main Navigation Header -->
+    <header class="bg-white/95 backdrop-blur-md border-b border-slate-200 sticky top-0 z-30 shadow-xs">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
+            <!-- Brand Identity -->
+            <div class="flex items-center space-x-3.5">
+                <div class="bg-gradient-to-br from-emerald-500 to-teal-700 text-white w-11 h-11 rounded-2xl flex items-center justify-center shadow-md shadow-emerald-600/20">
+                    <i class="fa-solid fa-basket-shopping text-lg"></i>
+                </div>
+                <div>
+                    <div class="flex items-center space-x-1.5">
+                        <h1 id="store-title" class="font-extrabold text-xl text-slate-900 tracking-tight">EasyStore</h1>
+                        <i class="fa-solid fa-circle-check text-emerald-600 text-sm" title="Verified Store"></i>
+                    </div>
+                    <p class="text-xs text-slate-500 font-medium">Official Quick-Order Portal</p>
+                </div>
+            </div>
+
+            <!-- Header Center Quick Stats (Desktop) -->
+            <div class="hidden lg:flex items-center space-x-6 text-xs text-slate-600 bg-slate-50 px-4 py-2.5 rounded-2xl border border-slate-200/80">
+                <div class="flex items-center space-x-2">
+                    <i class="fa-solid fa-layer-group text-emerald-600"></i>
+                    <span>Total Products: <strong id="header-total-products" class="text-slate-900">0</strong></span>
+                </div>
+                <span class="text-slate-300">|</span>
+                <div class="flex items-center space-x-2">
+                    <i class="fa-solid fa-circle-check text-emerald-600"></i>
+                    <span>In Stock: <strong id="header-instock-products" class="text-emerald-700">0</strong></span>
+                </div>
+                <span class="text-slate-300">|</span>
+                <div class="flex items-center space-x-2">
+                    <i class="fa-brands fa-whatsapp text-emerald-600 text-sm"></i>
+                    <span>Direct Checkout</span>
+                </div>
+            </div>
+
+            <!-- Header Actions -->
+            <div class="flex items-center space-x-3">
+                <button onclick="contactSupport()" class="hidden sm:inline-flex items-center space-x-2 px-3.5 py-2.5 rounded-xl border border-slate-200 hover:border-slate-300 bg-white text-slate-700 text-xs font-semibold transition">
+                    <i class="fa-brands fa-whatsapp text-emerald-600 text-base"></i>
+                    <span>Ask a Question</span>
+                </button>
+
+                <button onclick="toggleCartDrawer()" class="relative bg-slate-900 hover:bg-emerald-600 text-white font-semibold px-4 py-2.5 rounded-xl transition-all duration-200 flex items-center space-x-3 shadow-sm">
+                    <div class="flex items-center space-x-2">
+                        <i class="fa-solid fa-bag-shopping"></i>
+                        <span class="text-sm">Order Bag</span>
+                    </div>
+                    <span id="header-cart-total" class="hidden sm:inline text-xs bg-white/15 px-2 py-0.5 rounded-lg font-bold">$0.00</span>
+                    <span id="cart-badge" class="bg-emerald-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold">0</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- 3. Mature Hero & Storefront Banner Section -->
+    <section class="bg-white border-b border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-10">
+            <div class="relative rounded-3xl overflow-hidden bg-gradient-to-r from-slate-900 via-slate-800 to-emerald-950 text-white p-6 sm:p-10 shadow-xl">
+                <!-- Decorative background glow -->
+                <div class="absolute -top-24 -right-24 w-96 h-96 bg-emerald-500/20 rounded-full blur-3xl pointer-events-none"></div>
+                
+                <div class="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                    <div class="lg:col-span-7 space-y-4">
+                        <div class="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-xs px-3 py-1 rounded-full text-xs font-semibold text-emerald-300 border border-white/10">
+                            <i class="fa-solid fa-sparkles"></i>
+                            <span>Fast & Hassle-Free Wholesale & Retail Ordering</span>
+                        </div>
+                        <h2 class="text-2xl sm:text-4xl font-extrabold tracking-tight leading-tight">
+                            Build your order list in seconds & checkout with Ease.
+                        </h2>
+                        <p class="text-slate-300 text-sm sm:text-base max-w-2xl leading-relaxed">
+                           Browse live stock availability, tap to adjust quantities, and send your itemized order directly to our dispatch team.
+                        </p>
+                        <div class="pt-2 flex flex-wrap items-center gap-3">
+                            <a href="#catalog-section" class="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold px-5 py-3 rounded-xl text-sm transition inline-flex items-center space-x-2 shadow-lg shadow-emerald-500/20">
+                                <span>Start Ordering Now</span>
+                                <i class="fa-solid fa-arrow-down text-xs"></i>
+                            </a>
+                            <!-- <button onclick="setViewMode('list'); document.getElementById('catalog-section').scrollIntoView({behavior:'smooth'})" class="bg-white/10 hover:bg-white/20 text-white font-semibold px-5 py-3 rounded-xl text-sm transition inline-flex items-center space-x-2 border border-white/15">
+                                <i class="fa-solid fa-list-check"></i>
+                                <span>Switch to Quick-Order Table</span>
+                            </button> -->
+                        </div>
+                    </div>
+
+                    <!-- Right Column: 3-Step How It Works Card -->
+                    <div class="lg:col-span-5 bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-5 space-y-4">
+                        <h3 class="text-xs font-bold uppercase tracking-wider text-emerald-400">How Quick-Order Works</h3>
+                        <div class="space-y-3">
+                            <div class="flex items-start space-x-3">
+                                <span class="w-6 h-6 rounded-lg bg-emerald-500/20 border border-emerald-400/30 text-emerald-300 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">1</span>
+                                <div>
+                                    <p class="text-sm font-bold text-white">Select Items & Quantities</p>
+                                    <p class="text-xs text-slate-300">Use Grid or Quick-Table view to add available stock.</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start space-x-3">
+                                <span class="w-6 h-6 rounded-lg bg-emerald-500/20 border border-emerald-400/30 text-emerald-300 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">2</span>
+                                <div>
+                                    <p class="text-sm font-bold text-white">Enter Delivery Details</p>
+                                    <p class="text-xs text-slate-300">Provide your name, phone number, and delivery address.</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start space-x-3">
+                                <span class="w-6 h-6 rounded-lg bg-emerald-500/20 border border-emerald-400/30 text-emerald-300 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">3</span>
+                                <div>
+                                    <p class="text-sm font-bold text-white">Send Direct to WhatsApp</p>
+                                    <p class="text-xs text-slate-300">Your itemized receipt opens in WhatsApp for instant processing.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Trust & Service Highlights Bar -->
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mt-6">
+                <div class="bg-slate-50 border border-slate-200/80 rounded-2xl p-4 flex items-center space-x-3.5">
+                    <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
+                        <i class="fa-solid fa-boxes-stacked"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-xs sm:text-sm text-slate-900">Live Stock Sync</h4>
+                        <p class="text-[11px] sm:text-xs text-slate-500">Real-time catalog updates</p>
+                    </div>
+                </div>
+                <div class="bg-slate-50 border border-slate-200/80 rounded-2xl p-4 flex items-center space-x-3.5">
+                    <div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center shrink-0">
+                        <i class="fa-solid fa-truck-fast"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-xs sm:text-sm text-slate-900">Express Fulfillment</h4>
+                        <p class="text-[11px] sm:text-xs text-slate-500">Doorstep delivery or pickup</p>
+                    </div>
+                </div>
+                <div class="bg-slate-50 border border-slate-200/80 rounded-2xl p-4 flex items-center space-x-3.5">
+                    <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center shrink-0">
+                        <i class="fa-solid fa-receipt"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-xs sm:text-sm text-slate-900">Instant Invoice</h4>
+                        <p class="text-[11px] sm:text-xs text-slate-500">Auto-calculated totals</p>
+                    </div>
+                </div>
+                <div class="bg-slate-50 border border-slate-200/80 rounded-2xl p-4 flex items-center space-x-3.5">
+                    <div class="w-10 h-10 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center shrink-0">
+                        <i class="fa-solid fa-shield-halved"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-xs sm:text-sm text-slate-900">Verified Quality</h4>
+                        <p class="text-[11px] sm:text-xs text-slate-500">Direct from store warehouse</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. Main Catalog Section -->
+    <main id="catalog-section" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full">
+        <!-- Filter, Search & View Toolbar -->
+        <div class="bg-white p-4 rounded-2xl shadow-xs border border-slate-200 mb-6 space-y-4">
+            <div class="flex flex-col md:flex-row gap-3 items-center justify-between">
+                <!-- Search Input -->
+                <div class="relative w-full md:w-96">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-slate-400 text-sm"></i>
+                    <input type="text" id="search-input" oninput="handleSearch()" placeholder="Search product name or category..." class="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm">
+                </div>
+
+                <!-- Right Controls: Stock Toggle & View Mode Switcher -->
+                <div class="flex items-center justify-between md:justify-end w-full md:w-auto gap-3">
+                    <label class="inline-flex items-center space-x-2 text-xs font-semibold text-slate-600 cursor-pointer select-none bg-slate-50 px-3 py-2 rounded-xl border border-slate-200">
+                        <input type="checkbox" id="instock-only" onchange="toggleInStockOnly()" class="rounded text-emerald-600 focus:ring-emerald-500">
+                        <span>In-Stock Only</span>
+                    </label>
+
+                    <div class="bg-slate-100 p-1 rounded-xl flex items-center border border-slate-200">
+                        <button id="btn-view-grid" onclick="setViewMode('grid')" class="px-3 py-1.5 rounded-lg text-xs font-bold transition bg-white text-slate-900 shadow-xs flex items-center space-x-1.5">
+                            <i class="fa-solid fa-grip"></i>
+                            <span>Grid</span>
+                        </button>
+                        <button id="btn-view-list" onclick="setViewMode('list')" class="px-3 py-1.5 rounded-lg text-xs font-bold transition text-slate-600 hover:text-slate-900 flex items-center space-x-1.5">
+                            <i class="fa-solid fa-table-list"></i>
+                            <span>Quick List</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Category Pills -->
+            <div id="category-pills" class="flex items-center space-x-2 overflow-x-auto pt-2 border-t border-slate-100 pb-1"></div>
+        </div>
+
+        <!-- Product Container (Grid or Quick Table) -->
+        <div id="product-container">
+            <div class="py-16 text-center text-slate-400">
+                <i class="fa-solid fa-spinner fa-spin text-3xl mb-3 text-emerald-600"></i>
+                <p class="text-sm font-medium">Loading store catalog...</p>
+            </div>
+        </div>
+
+        <!-- Responsive Pagination -->
+        <div id="pagination-container" class="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-slate-200 pt-6"></div>
+    </main>
+
+    <!-- 5. Mature Footer -->
+    <footer class="bg-white border-t border-slate-200 mt-16 pb-24 sm:pb-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
+            <div class="flex items-center space-x-2">
+                <span class="font-bold text-slate-800" id="footer-store-name">EasyStore</span>
+                <span>•</span>
+                <span>Powered by Direct WhatsApp Quick-Order</span>
+            </div>
+            <div>
+                <span>All prices include applicable taxes unless stated otherwise.</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Sticky Bottom Order Summary Bar -->
+    <div id="sticky-cart-bar" class="fixed bottom-0 left-0 right-0 bg-slate-900/95 backdrop-blur-md text-white border-t border-slate-800 p-4 shadow-2xl z-40 transform translate-y-full transition-transform duration-300">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <div class="flex items-center space-x-4">
+                <div class="bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 w-10 h-10 rounded-xl flex items-center justify-center font-bold" id="bar-item-count">0</div>
+                <div>
+                    <p class="text-xs text-slate-400 font-medium">Estimated Order Total</p>
+                    <p class="text-lg font-extrabold text-white" id="bar-total-price">$0.00</p>
+                </div>
+            </div>
+            <button onclick="toggleCartDrawer()" class="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold px-6 py-3 rounded-xl shadow-lg transition flex items-center space-x-2 text-sm">
+                <span>Proceed to Checkout</span>
+                <i class="fa-solid fa-arrow-right"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Slide-Over Checkout Drawer -->
+    <div id="cart-drawer" class="fixed inset-0 z-50 overflow-hidden hidden">
+        <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-xs transition-opacity" onclick="toggleCartDrawer()"></div>
+        <div class="absolute inset-y-0 right-0 max-w-full flex pl-10">
+            <div class="w-screen max-w-md bg-white shadow-2xl flex flex-col">
+                <div class="p-6 border-b border-slate-200 flex items-center justify-between bg-slate-900 text-white">
+                    <h2 class="text-base font-bold flex items-center space-x-2">
+                        <i class="fa-solid fa-bag-shopping text-emerald-400"></i>
+                        <span>Complete Your Order</span>
+                    </h2>
+                    <button onclick="toggleCartDrawer()" class="text-slate-400 hover:text-white text-xl p-1"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+
+                <div class="flex-1 overflow-y-auto p-6 space-y-6">
+                    <div id="cart-items-list" class="divide-y divide-slate-100"></div>
+
+                    <div class="border-t border-slate-200 pt-5 space-y-4">
+                        <h3 class="font-bold text-slate-900 text-sm">Customer & Delivery Details</h3>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Full Name *</label>
+                            <input type="text" id="cust-name" placeholder="e.g. Sarah Jenkins" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Phone / WhatsApp Number *</label>
+                            <input type="tel" id="cust-phone" placeholder="e.g. +1 555 234 5678" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Delivery Option</label>
+                            <select id="cust-delivery" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 outline-none">
+                                <option value="Home / Office Delivery">Home / Office Delivery</option>
+                                <option value="Store Pickup">Store Pickup</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Delivery Address / Order Notes</label>
+                            <textarea id="cust-address" rows="2" placeholder="Street address, landmark, or special instructions..." class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 outline-none"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-6 border-t border-slate-200 bg-slate-50">
+                    <div class="flex justify-between mb-4 text-base font-extrabold text-slate-900">
+                        <span>Total Payable:</span>
+                        <span id="drawer-total-price" class="text-emerald-600">$0.00</span>
+                    </div>
+                    <button onclick="submitOrderToWhatsApp()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 px-4 rounded-xl shadow-lg transition flex items-center justify-center space-x-2">
+                        <i class="fa-brands fa-whatsapp text-xl"></i>
+                        <span>Send Order via WhatsApp</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const CONFIG = {
+            binId: "6ae4c984ffd5d1605398f280",
+            apiKey: "$2a$10$q.tJa2P9V2hnmTwVSwkqiOELFjI1WrwoHuJ23HlJy37q6bDk.HkKm"
+        };
+
+        // Fallback data matching store-data.json so the storefront works immediately
+        const FALLBACK_DATA = {
+            storeName: "EasyStore",
+            whatsapp: "15551234567",
+            currency: "$",
+            products: [
+                { id: 1, name: "Organic Hass Avocados (Pack of 4)", price: 6.5, category: "Produce", image: "https://images.unsplash.com/photo-1523049673857-eb18f1d7b578?w=500&auto=format&fit=crop&q=60", available: true },
+                { id: 2, name: "Artisanal Sourdough Bread", price: 5.0, category: "Bakery", image: "https://images.unsplash.com/photo-1586444248902-2f64eddc13df?w=500&auto=format&fit=crop&q=60", available: true },
+                { id: 3, name: "Fresh Raw Organic Honey (500g)", price: 12.0, category: "Pantry", image: "https://images.unsplash.com/photo-1587049352847-4a222e784d38?w=500&auto=format&fit=crop&q=60", available: false },
+                { id: 4, name: "Almond Milk Unsweetened (1L)", price: 3.8, category: "Dairy", image: "https://images.unsplash.com/photo-1563636619-e9143da7973b?w=500&auto=format&fit=crop&q=60", available: true }
+            ]
+        };
+
+        let storeData = FALLBACK_DATA;
+        let cart = {};
+        let currentCategory = 'All';
+        let searchQuery = '';
+        let inStockOnly = false;
+        let viewMode = 'grid'; // 'grid' | 'list'
+        let currentPage = 1;
+        const itemsPerPage = 8;
+
+        async function fetchStoreData() {
+            if (CONFIG.binId && CONFIG.binId !== "YOUR_JSONBIN_ID_HERE") {
+                try {
+                    const res = await fetch(`https://api.jsonbin.io/v3/b/${CONFIG.binId}/latest`, {
+                        headers: { 'X-Master-Key': CONFIG.apiKey }
+                    });
+                    if (res.ok) {
+                        const data = await res.json();
+                        storeData = data.record;
+                    }
+                } catch (err) {
+                    console.warn("Using fallback catalog data:", err);
+                }
+            }
+            document.getElementById('store-title').innerText = storeData.storeName;
+            document.getElementById('footer-store-name').innerText = storeData.storeName;
+            renderStore();
+        }
+
+        function setViewMode(mode) {
+            viewMode = mode;
+            const gridBtn = document.getElementById('btn-view-grid');
+            const listBtn = document.getElementById('btn-view-list');
+            if (mode === 'grid') {
+                gridBtn.className = "px-3 py-1.5 rounded-lg text-xs font-bold transition bg-white text-slate-900 shadow-xs flex items-center space-x-1.5";
+                listBtn.className = "px-3 py-1.5 rounded-lg text-xs font-bold transition text-slate-600 hover:text-slate-900 flex items-center space-x-1.5";
+            } else {
+                listBtn.className = "px-3 py-1.5 rounded-lg text-xs font-bold transition bg-white text-slate-900 shadow-xs flex items-center space-x-1.5";
+                gridBtn.className = "px-3 py-1.5 rounded-lg text-xs font-bold transition text-slate-600 hover:text-slate-900 flex items-center space-x-1.5";
+            }
+            renderStore();
+        }
+
+        function toggleInStockOnly() {
+            inStockOnly = document.getElementById('instock-only').checked;
+            currentPage = 1;
+            renderStore();
+        }
+
+        function renderStore() {
+            const products = storeData.products || [];
+            document.getElementById('header-total-products').innerText = products.length;
+            document.getElementById('header-instock-products').innerText = products.filter(p => p.available).length;
+
+            const categories = ['All', ...new Set(products.map(p => p.category))];
+            document.getElementById('category-pills').innerHTML = categories.map(cat => `
+                <button onclick="setCategory('${cat}')" class="px-4 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition ${currentCategory === cat ? 'bg-slate-900 text-white shadow-xs' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}">${cat}</button>
+            `).join('');
+
+            let filtered = products.filter(p => {
+                const matchesCat = currentCategory === 'All' || p.category === currentCategory;
+                const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase()) || p.category.toLowerCase().includes(searchQuery.toLowerCase());
+                const matchesStock = !inStockOnly || p.available;
+                return matchesCat && matchesSearch && matchesStock;
+            });
+
+            const totalPages = Math.ceil(filtered.length / itemsPerPage) || 1;
+            if (currentPage > totalPages) currentPage = totalPages;
+            const start = (currentPage - 1) * itemsPerPage;
+            const paginated = filtered.slice(start, start + itemsPerPage);
+
+            const container = document.getElementById('product-container');
+            if (filtered.length === 0) {
+                container.innerHTML = `<div class="bg-white rounded-2xl border border-slate-200 py-16 text-center text-slate-400"><i class="fa-solid fa-box-open text-4xl mb-3"></i><p class="font-semibold text-slate-600">No matching products found</p><p class="text-xs mt-1">Try clearing your search filter or switching categories.</p></div>`;
+            } else if (viewMode === 'grid') {
+                container.innerHTML = `<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">` + paginated.map(p => {
+                    const qty = cart[p.id] || 0;
+                    return `
+                        <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xs hover:shadow-md transition flex flex-col">
+                            <div class="relative h-48 bg-slate-100">
+                                <img src="${p.image || 'https://via.placeholder.com/400'}" alt="${p.name}" class="w-full h-full object-cover">
+                                <span class="absolute top-3 right-3 px-2.5 py-1 rounded-full text-[11px] font-bold shadow-xs ${p.available ? 'bg-emerald-500 text-white' : 'bg-rose-500 text-white'}">${p.available ? 'In Stock' : 'Sold Out'}</span>
+                            </div>
+                            <div class="p-5 flex-1 flex flex-col justify-between">
+                                <div>
+                                    <span class="text-[11px] font-bold text-emerald-600 uppercase tracking-wider">${p.category}</span>
+                                    <h3 class="font-bold text-slate-900 mt-1 mb-2 leading-snug">${p.name}</h3>
+                                    <p class="text-lg font-extrabold text-slate-900">${storeData.currency}${p.price.toFixed(2)}</p>
+                                </div>
+                                <div class="mt-4">
+                                    ${p.available ? (qty === 0 ? `
+                                        <button onclick="updateQty(${p.id}, 1)" class="w-full bg-slate-900 hover:bg-emerald-600 text-white font-semibold py-2.5 rounded-xl transition text-xs flex items-center justify-center space-x-1.5">
+                                            <i class="fa-solid fa-plus"></i><span>Add to Order</span>
+                                        </button>` : `
+                                        <div class="flex items-center justify-between bg-emerald-50 border border-emerald-200 rounded-xl p-1">
+                                            <button onclick="updateQty(${p.id}, -1)" class="w-8 h-8 bg-white rounded-lg shadow-xs text-slate-700 font-bold hover:bg-slate-100">-</button>
+                                            <span class="font-extrabold text-sm text-emerald-800">${qty} in bag</span>
+                                            <button onclick="updateQty(${p.id}, 1)" class="w-8 h-8 bg-emerald-600 rounded-lg shadow-xs text-white font-bold hover:bg-emerald-700">+</button>
+                                        </div>
+                                    `) : `<button disabled class="w-full bg-slate-100 text-slate-400 font-semibold py-2.5 rounded-xl text-xs cursor-not-allowed">Out of Stock</button>`}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('') + `</div>`;
+            } else {
+                // Quick-Order Table View (EasyOrderForm style)
+                container.innerHTML = `
+                    <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xs">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse">
+                                <thead>
+                                    <tr class="bg-slate-50 border-b border-slate-200 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+                                        <th class="p-4">Product</th>
+                                        <th class="p-4 hidden sm:table-cell">Category</th>
+                                        <th class="p-4">Unit Price</th>
+                                        <th class="p-4 text-right">Quantity</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-100 text-sm">
+                                    ${paginated.map(p => {
+                                        const qty = cart[p.id] || 0;
+                                        return `
+                                            <tr class="hover:bg-slate-50/80 transition">
+                                                <td class="p-4 flex items-center space-x-3">
+                                                    <img src="${p.image || 'https://via.placeholder.com/100'}" class="w-12 h-12 rounded-xl object-cover border border-slate-200 shrink-0">
+                                                    <div>
+                                                        <p class="font-bold text-slate-900">${p.name}</p>
+                                                        <span class="inline-block mt-0.5 text-[11px] font-semibold ${p.available ? 'text-emerald-600' : 'text-rose-500'}">${p.available ? 'Available' : 'Out of Stock'}</span>
+                                                    </div>
+                                                </td>
+                                                <td class="p-4 text-slate-500 font-medium hidden sm:table-cell">${p.category}</td>
+                                                <td class="p-4 font-extrabold text-slate-900">${storeData.currency}${p.price.toFixed(2)}</td>
+                                                <td class="p-4 text-right">
+                                                    ${p.available ? `
+                                                        <div class="inline-flex items-center space-x-2 bg-slate-100 rounded-xl p-1 border border-slate-200">
+                                                            <button onclick="updateQty(${p.id}, -1)" class="w-7 h-7 bg-white rounded-lg shadow-xs text-slate-700 font-bold hover:bg-slate-50">-</button>
+                                                            <span class="w-6 text-center font-bold text-xs">${qty}</span>
+                                                            <button onclick="updateQty(${p.id}, 1)" class="w-7 h-7 bg-emerald-600 text-white rounded-lg shadow-xs font-bold hover:bg-emerald-700">+</button>
+                                                        </div>
+                                                    ` : `<span class="text-xs font-semibold text-slate-400">Unavailable</span>`}
+                                                </td>
+                                            </tr>
+                                        `;
+                                    }).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                `;
+            }
+
+            document.getElementById('pagination-container').innerHTML = `
+                <div class="text-xs text-slate-500 font-medium">Showing <strong class="text-slate-900">${filtered.length > 0 ? start + 1 : 0}–${Math.min(start + itemsPerPage, filtered.length)}</strong> of <strong class="text-slate-900">${filtered.length}</strong> products</div>
+                <div class="flex items-center space-x-2">
+                    <button onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''} class="px-3.5 py-2 rounded-xl border border-slate-200 bg-white text-xs font-bold ${currentPage === 1 ? 'opacity-40 cursor-not-allowed' : 'hover:bg-slate-100'}">Previous</button>
+                    <span class="text-xs font-bold px-3 py-2 bg-slate-100 rounded-xl">Page ${currentPage} of ${totalPages}</span>
+                    <button onclick="changePage(${currentPage + 1})" ${currentPage >= totalPages ? 'disabled' : ''} class="px-3.5 py-2 rounded-xl border border-slate-200 bg-white text-xs font-bold ${currentPage >= totalPages ? 'opacity-40 cursor-not-allowed' : 'hover:bg-slate-100'}">Next</button>
+                </div>
+            `;
+            updateCartSummary();
+        }
+
+        function setCategory(cat) { currentCategory = cat; currentPage = 1; renderStore(); }
+        function handleSearch() { searchQuery = document.getElementById('search-input').value; currentPage = 1; renderStore(); }
+        function changePage(p) { currentPage = p; renderStore(); document.getElementById('catalog-section').scrollIntoView({ behavior: 'smooth' }); }
+        function updateQty(id, delta) { cart[id] = (cart[id] || 0) + delta; if (cart[id] <= 0) delete cart[id]; renderStore(); }
+
+        function updateCartSummary() {
+            let totalCount = 0, totalPrice = 0;
+            const products = storeData.products || [];
+            for (let id in cart) {
+                let p = products.find(prod => prod.id == id);
+                if (p) { totalCount += cart[id]; totalPrice += p.price * cart[id]; }
+            }
+            const formattedTotal = storeData.currency + totalPrice.toFixed(2);
+            document.getElementById('cart-badge').innerText = totalCount;
+            document.getElementById('header-cart-total').innerText = formattedTotal;
+            document.getElementById('bar-item-count').innerText = totalCount;
+            document.getElementById('bar-total-price').innerText = formattedTotal;
+            document.getElementById('drawer-total-price').innerText = formattedTotal;
+
+            const stickyBar = document.getElementById('sticky-cart-bar');
+            if (totalCount > 0) stickyBar.classList.remove('translate-y-full');
+            else stickyBar.classList.add('translate-y-full');
+
+            document.getElementById('cart-items-list').innerHTML = totalCount === 0
+                ? `<p class="text-center text-slate-400 py-8 text-sm">Your order bag is empty.</p>`
+                : Object.entries(cart).map(([id, qty]) => {
+                    let p = products.find(prod => prod.id == id);
+                    if (!p) return '';
+                    return `
+                        <div class="py-3 flex items-center justify-between gap-3">
+                            <div>
+                                <h4 class="font-bold text-sm text-slate-900">${p.name}</h4>
+                                <p class="text-xs text-slate-500">${storeData.currency}${p.price.toFixed(2)} × ${qty}</p>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <button onclick="updateQty(${p.id}, -1)" class="w-6 h-6 bg-slate-100 rounded text-xs font-bold">-</button>
+                                <span class="text-xs font-bold w-4 text-center">${qty}</span>
+                                <button onclick="updateQty(${p.id}, 1)" class="w-6 h-6 bg-emerald-600 text-white rounded text-xs font-bold">+</button>
+                            </div>
+                        </div>`;
+                }).join('');
+        }
+
+        function toggleCartDrawer() { document.getElementById('cart-drawer').classList.toggle('hidden'); }
+
+        function contactSupport() {
+            window.open(`https://wa.me/${storeData.whatsapp}?text=Hello%20${encodeURIComponent(storeData.storeName)},%20I%20have%20an%20inquiry.`, '_blank');
+        }
+
+        function submitOrderToWhatsApp() {
+            const name = document.getElementById('cust-name').value.trim();
+            const phone = document.getElementById('cust-phone').value.trim();
+            const delivery = document.getElementById('cust-delivery').value;
+            const address = document.getElementById('cust-address').value.trim();
+            if (!name || !phone) { alert('Please enter your Name and Phone/WhatsApp number.'); return; }
+
+            let message = `*NEW ORDER — ${storeData.storeName}*%0A%0A*Customer:* ${name}%0A*Phone:* ${phone}%0A*Fulfillment:* ${delivery}%0A`;
+            if (address) message += `*Address/Notes:* ${address}%0A`;
+            message += `%0A*Order Summary:*%0A`;
+            let total = 0;
+            const products = storeData.products || [];
+            for (let id in cart) {
+                let p = products.find(prod => prod.id == id);
+                if (p) {
+                    let sub = p.price * cart[id];
+                    total += sub;
+                    message += `• ${p.name} (x${cart[id]}) — ${storeData.currency}${sub.toFixed(2)}%0A`;
+                }
+            }
+            message += `%0A*TOTAL PAYABLE: ${storeData.currency}${total.toFixed(2)}*`;
+            window.open(`https://wa.me/${storeData.whatsapp}?text=${message}`, '_blank');
+        }
+
+        fetchStoreData();
+    </script>
+</body>
+</html>

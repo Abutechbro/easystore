@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Store Admin Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-100 text-gray-900 h-full flex flex-col font-sans">
+
+    <!-- PIN Authentication Modal -->
+    <div id="auth-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900">
+        <div class="bg-white rounded-2xl max-w-sm w-full p-8 shadow-2xl text-center space-y-4">
+            <div class="bg-indigo-50 text-indigo-600 w-12 h-12 rounded-2xl mx-auto flex items-center justify-center text-xl">
+                <i class="fa-solid fa-lock"></i>
+            </div>
+            <h2 class="font-bold text-lg text-gray-900">Admin Authentication</h2>
+            <p class="text-xs text-gray-500">Enter your store manager PIN code to continue.</p>
+            <input type="password" id="admin-pin" placeholder="Enter PIN (default: 1234)" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-center tracking-widest text-lg outline-none focus:ring-2 focus:ring-indigo-500">
+            <button onclick="verifyPin()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-xl transition text-sm shadow-sm">Access Dashboard</button>
+        </div>
+    </div>
+
+    <!-- Admin Header -->
+    <header class="bg-slate-900 text-white shadow-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="bg-indigo-600 p-2 rounded-xl"><i class="fa-solid fa-gauge-high text-lg"></i></div>
+                <div>
+                    <h1 class="font-bold text-base">Store Management Console</h1>
+                    <p class="text-xs text-slate-400">Global Cloud Database</p>
+                </div>
+            </div>
+            <a href="index.html" target="_blank" class="bg-slate-800 hover:bg-slate-700 text-xs font-semibold px-4 py-2 rounded-xl transition flex items-center space-x-2">
+                <span>View Storefront</span>
+                <i class="fa-solid fa-external-link text-xs"></i>
+            </a>
+        </div>
+    </header>
+
+    <!-- Admin Body -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full space-y-6">
+        <div class="bg-white p-6 rounded-2xl shadow-xs border border-gray-200 grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+                <label class="block text-xs font-semibold text-gray-600 mb-1">Store Name</label>
+                <input type="text" id="cfg-name" class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-indigo-500">
+            </div>
+            <div>
+                <label class="block text-xs font-semibold text-gray-600 mb-1">WhatsApp Number</label>
+                <input type="text" id="cfg-whatsapp" placeholder="15551234567" class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-indigo-500">
+            </div>
+            <div class="flex items-end">
+                <button onclick="saveConfig()" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-semibold py-2 px-4 rounded-xl text-sm transition shadow-sm">Save Store Settings</button>
+            </div>
+        </div>
+
+        <div class="flex items-center justify-between">
+            <h2 class="font-bold text-lg text-gray-900">Manage Products & Stock</h2>
+            <button onclick="openProductModal()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-4 py-2.5 rounded-xl text-sm transition flex items-center space-x-2 shadow-sm">
+                <i class="fa-solid fa-plus"></i>
+                <span>Add New Product</span>
+            </button>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-xs border border-gray-200 overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-gray-50 border-b border-gray-200 text-xs font-bold text-gray-500 uppercase tracking-wider">
+                            <th class="p-4">Product</th>
+                            <th class="p-4">Category</th>
+                            <th class="p-4">Price</th>
+                            <th class="p-4">Stock Status</th>
+                            <th class="p-4 text-right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="admin-product-table" class="divide-y divide-gray-100 text-sm">
+                        <tr><td colspan="5" class="p-8 text-center text-gray-400">Loading catalog from cloud...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- Product Modal (With Direct Image Upload) -->
+    <div id="product-modal" class="fixed inset-0 z-50 overflow-y-auto hidden">
+        <div class="flex items-center justify-center min-h-screen px-4">
+            <div class="fixed inset-0 bg-black/50 backdrop-blur-xs" onclick="closeProductModal()"></div>
+            <div class="bg-white rounded-2xl max-w-lg w-full p-6 relative z-10 shadow-2xl space-y-4">
+                <h3 id="modal-title" class="font-bold text-lg text-gray-900">Add New Product</h3>
+                <input type="hidden" id="prod-id">
+                <input type="hidden" id="prod-image">
+
+                <div>
+                    <label class="block text-xs font-semibold text-gray-600 mb-1">Product Name *</label>
+                    <input type="text" id="prod-name" class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">Price ($) *</label>
+                        <input type="number" step="0.01" id="prod-price" class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">Category *</label>
+                        <input type="text" id="prod-category" placeholder="Produce..." class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                </div>
+
+                <!-- Image File Upload & Live Preview -->
+                <div>
+                    <label class="block text-xs font-semibold text-gray-600 mb-1">Product Image *</label>
+                    <div class="flex items-center space-x-4">
+                        <div class="w-20 h-20 rounded-xl border border-gray-200 bg-gray-50 overflow-hidden shrink-0 flex items-center justify-center">
+                            <img id="prod-image-preview" src="https://via.placeholder.com/150?text=No+Image" class="w-full h-full object-cover">
+                        </div>
+                        <div class="flex-1">
+                            <label class="cursor-pointer bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-semibold px-4 py-2.5 rounded-xl text-xs inline-flex items-center space-x-2 transition border border-indigo-200">
+                                <i class="fa-solid fa-cloud-arrow-up"></i>
+                                <span id="upload-btn-text">Upload Photo from Device</span>
+                                <input type="file" id="prod-image-file" accept="image/*" onchange="handleImageUpload(event)" class="hidden">
+                            </label>
+                            <p class="text-[11px] text-gray-400 mt-1.5">Auto-compressed for fast cloud storage (JPG, PNG, WEBP).</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex items-center space-x-2 pt-2">
+                    <input type="checkbox" id="prod-available" checked class="w-4 h-4 text-indigo-600 rounded">
+                    <label class="text-xs font-semibold text-gray-700">Available for ordering</label>
+                </div>
+
+                <div class="flex justify-end space-x-3 pt-4 border-t border-gray-100">
+                    <button onclick="closeProductModal()" class="px-4 py-2 rounded-xl text-xs font-semibold bg-gray-100 text-gray-600 hover:bg-gray-200">Cancel</button>
+                    <button id="save-prod-btn" onclick="saveProduct()" class="px-5 py-2 rounded-xl text-xs font-semibold bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm">Save Product</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const CONFIG = {
+            binId: "6ae4c984ffd5d1605398f280", // Must match index.html
+            apiKey: "$2a$10$q.tJa2P9V2hnmTwVSwkqiOELFjI1WrwoHuJ23HlJy37q6bDk.HkKm", // Must match index.html
+            adminPin: "1234"
+        };
+
+        let storeData = { storeName: "EasyStore", whatsapp: "15551234567", currency: "$", products: [] };
+
+        function verifyPin() {
+            const entered = document.getElementById('admin-pin').value;
+            if (entered === CONFIG.adminPin) {
+                document.getElementById('auth-modal').classList.add('hidden');
+                loadStoreData();
+            } else {
+                alert('Incorrect PIN code.');
+            }
+        }
+
+        // Compress uploaded image into lightweight Base64 so it fits easily inside JSONBin
+        function handleImageUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            document.getElementById('upload-btn-text').innerText = "Processing...";
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    const MAX_SIZE = 400; // 400px max dimension keeps JSON payload tiny & fast
+                    let width = img.width;
+                    let height = img.height;
+
+                    if (width > height) {
+                        if (width > MAX_SIZE) {
+                            height *= MAX_SIZE / width;
+                            width = MAX_SIZE;
+                        }
+                    } else {
+                        if (height > MAX_SIZE) {
+                            width *= MAX_SIZE / height;
+                            height = MAX_SIZE;
+                        }
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    const compressedBase64 = canvas.toDataURL('image/jpeg', 0.7);
+                    document.getElementById('prod-image').value = compressedBase64;
+                    document.getElementById('prod-image-preview').src = compressedBase64;
+                    document.getElementById('upload-btn-text').innerText = "Change Photo";
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        async function loadStoreData() {
+            try {
+                const res = await fetch(`https://api.jsonbin.io/v3/b/${CONFIG.binId}/latest`, {
+                    headers: { 'X-Master-Key': CONFIG.apiKey }
+                });
+                const data = await res.json();
+                storeData = data.record;
+                document.getElementById('cfg-name').value = storeData.storeName;
+                document.getElementById('cfg-whatsapp').value = storeData.whatsapp;
+                renderAdminTable();
+            } catch (err) {
+                alert('Error loading data from cloud.');
+            }
+        }
+
+        async function saveToCloud() {
+            try {
+                await fetch(`https://api.jsonbin.io/v3/b/${CONFIG.binId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json', 'X-Master-Key': CONFIG.apiKey },
+                    body: JSON.stringify(storeData)
+                });
+            } catch (err) {
+                alert('Error syncing with cloud.');
+            }
+        }
+
+        function renderAdminTable() {
+            const products = storeData.products || [];
+            document.getElementById('admin-product-table').innerHTML = products.map(p => `
+                <tr class="hover:bg-gray-50 transition">
+                    <td class="p-4 flex items-center space-x-3">
+                        <img src="${p.image || 'https://via.placeholder.com/100'}" class="w-10 h-10 rounded-lg object-cover border border-gray-200">
+                        <div>
+                            <p class="font-bold text-gray-900">${p.name}</p>
+                            <span class="text-xs text-gray-400">ID: ${p.id}</span>
+                        </div>
+                    </td>
+                    <td class="p-4 text-gray-600 font-medium">${p.category}</td>
+                    <td class="p-4 font-bold text-gray-900">${storeData.currency}${p.price.toFixed(2)}</td>
+                    <td class="p-4">
+                        <button onclick="toggleAvailability(${p.id})" class="px-3 py-1 rounded-full text-xs font-bold transition ${p.available ? 'bg-emerald-100 text-emerald-800 hover:bg-emerald-200' : 'bg-red-100 text-red-800 hover:bg-red-200'}">
+                            ${p.available ? 'Available' : 'Out of Stock'}
+                        </button>
+                    </td>
+                    <td class="p-4 text-right space-x-2">
+                        <button onclick="openProductModal(${p.id})" class="text-gray-500 hover:text-indigo-600 px-2 py-1"><i class="fa-solid fa-pen"></i></button>
+                        <button onclick="deleteProduct(${p.id})" class="text-gray-500 hover:text-red-600 px-2 py-1"><i class="fa-solid fa-trash"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        async function saveConfig() {
+            storeData.storeName = document.getElementById('cfg-name').value;
+            storeData.whatsapp = document.getElementById('cfg-whatsapp').value;
+            await saveToCloud();
+            alert('Store settings saved & synced globally!');
+        }
+
+        async function toggleAvailability(id) {
+            let p = storeData.products.find(prod => prod.id === id);
+            if (p) {
+                p.available = !p.available;
+                await saveToCloud();
+                renderAdminTable();
+            }
+        }
+
+        async function deleteProduct(id) {
+            if (confirm('Delete this product?')) {
+                storeData.products = storeData.products.filter(p => p.id !== id);
+                await saveToCloud();
+                renderAdminTable();
+            }
+        }
+
+        function openProductModal(id = null) {
+            document.getElementById('product-modal').classList.remove('hidden');
+            document.getElementById('prod-image-file').value = '';
+            document.getElementById('upload-btn-text').innerText = "Upload Photo from Device";
+
+            if (id) {
+                document.getElementById('modal-title').innerText = "Edit Product";
+                let p = storeData.products.find(prod => prod.id === id);
+                document.getElementById('prod-id').value = p.id;
+                document.getElementById('prod-name').value = p.name;
+                document.getElementById('prod-price').value = p.price;
+                document.getElementById('prod-category').value = p.category;
+                document.getElementById('prod-image').value = p.image || '';
+                document.getElementById('prod-image-preview').src = p.image || 'https://via.placeholder.com/150?text=No+Image';
+                document.getElementById('prod-available').checked = p.available;
+            } else {
+                document.getElementById('modal-title').innerText = "Add New Product";
+                document.getElementById('prod-id').value = '';
+                document.getElementById('prod-name').value = '';
+                document.getElementById('prod-price').value = '';
+                document.getElementById('prod-category').value = '';
+                document.getElementById('prod-image').value = '';
+                document.getElementById('prod-image-preview').src = 'https://via.placeholder.com/150?text=No+Image';
+                document.getElementById('prod-available').checked = true;
+            }
+        }
+
+        function closeProductModal() {
+            document.getElementById('product-modal').classList.add('hidden');
+        }
+
+        async function saveProduct() {
+            const id = document.getElementById('prod-id').value;
+            const name = document.getElementById('prod-name').value.trim();
+            const price = parseFloat(document.getElementById('prod-price').value);
+            const category = document.getElementById('prod-category').value.trim();
+            const image = document.getElementById('prod-image').value.trim();
+            const available = document.getElementById('prod-available').checked;
+
+            if (!name || isNaN(price) || !category) {
+                alert('Please fill out Name, Price, and Category.');
+                return;
+            }
+
+            const btn = document.getElementById('save-prod-btn');
+            btn.innerText = "Saving...";
+            btn.disabled = true;
+
+            if (id) {
+                let p = storeData.products.find(prod => prod.id == id);
+                p.name = name;
+                p.price = price;
+                p.category = category;
+                p.image = image || 'https://via.placeholder.com/400';
+                p.available = available;
+            } else {
+                const newId = storeData.products.length > 0 ? Math.max(...storeData.products.map(p => p.id)) + 1 : 1;
+                storeData.products.push({
+                    id: newId,
+                    name,
+                    price,
+                    category,
+                    image: image || 'https://via.placeholder.com/400',
+                    available
+                });
+            }
+
+            await saveToCloud();
+            btn.innerText = "Save Product";
+            btn.disabled = false;
+            closeProductModal();
+            renderAdminTable();
+        }
+    </script>
+</body>
+</html>
