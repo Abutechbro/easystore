@@ -142,11 +142,11 @@
     <script>
         const CONFIG = {
             binId: "6ae4c984ffd5d1605398f280", // Must match index.html
-            apiKey: "€2a€10€q.tJa2P9V2hnmTwVSwkqiOELFjI1WrwoHuJ23HlJy37q6bDk.HkKm", // Must match index.html
+            apiKey: "$2a$10$q.tJa2P9V2hnmTwVSwkqiOELFjI1WrwoHuJ23HlJy37q6bDk.HkKm", // Must match index.html
             adminPin: "afrov20@"
         };
 
-        let storeData = { storeName: "Afrovana", whatsapp: "+4407771073417", currency: "€", products: [] };
+        let storeData = { storeName: "Afrovana", whatsapp: "+4407771073417", currency: "$", products: [] };
 
         function verifyPin() {
             const entered = document.getElementById('admin-pin').value;
@@ -202,7 +202,7 @@
 
         async function loadStoreData() {
             try {
-                const res = await fetch(`https://api.jsonbin.io/v3/b/€{CONFIG.binId}/latest`, {
+                const res = await fetch(`https://api.jsonbin.io/v3/b/${CONFIG.binId}/latest`, {
                     headers: { 'X-Master-Key': CONFIG.apiKey }
                 });
                 const data = await res.json();
@@ -217,7 +217,7 @@
 
         async function saveToCloud() {
             try {
-                await fetch(`https://api.jsonbin.io/v3/b/€{CONFIG.binId}`, {
+                await fetch(`https://api.jsonbin.io/v3/b/${CONFIG.binId}`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json', 'X-Master-Key': CONFIG.apiKey },
                     body: JSON.stringify(storeData)
@@ -232,22 +232,22 @@
             document.getElementById('admin-product-table').innerHTML = products.map(p => `
                 <tr class="hover:bg-gray-50 transition">
                     <td class="p-4 flex items-center space-x-3">
-                        <img src="€{p.image || 'https://via.placeholder.com/100'}" class="w-10 h-10 rounded-lg object-cover border border-gray-200">
+                        <img src="${p.image || 'https://via.placeholder.com/100'}" class="w-10 h-10 rounded-lg object-cover border border-gray-200">
                         <div>
-                            <p class="font-bold text-gray-900">€{p.name}</p>
-                            <span class="text-xs text-gray-400">ID: €{p.id}</span>
+                            <p class="font-bold text-gray-900">${p.name}</p>
+                            <span class="text-xs text-gray-400">ID: ${p.id}</span>
                         </div>
                     </td>
-                    <td class="p-4 text-gray-600 font-medium">€{p.category}</td>
-                    <td class="p-4 font-bold text-gray-900">€{storeData.currency}€{p.price.toFixed(2)}</td>
+                    <td class="p-4 text-gray-600 font-medium">${p.category}</td>
+                    <td class="p-4 font-bold text-gray-900">${storeData.currency}${p.price.toFixed(2)}</td>
                     <td class="p-4">
-                        <button onclick="toggleAvailability(€{p.id})" class="px-3 py-1 rounded-full text-xs font-bold transition €{p.available ? 'bg-emerald-100 text-emerald-800 hover:bg-emerald-200' : 'bg-red-100 text-red-800 hover:bg-red-200'}">
-                            €{p.available ? 'Available' : 'Out of Stock'}
+                        <button onclick="toggleAvailability(${p.id})" class="px-3 py-1 rounded-full text-xs font-bold transition ${p.available ? 'bg-emerald-100 text-emerald-800 hover:bg-emerald-200' : 'bg-red-100 text-red-800 hover:bg-red-200'}">
+                            ${p.available ? 'Available' : 'Out of Stock'}
                         </button>
                     </td>
                     <td class="p-4 text-right space-x-2">
-                        <button onclick="openProductModal(€{p.id})" class="text-gray-500 hover:text-indigo-600 px-2 py-1"><i class="fa-solid fa-pen"></i></button>
-                        <button onclick="deleteProduct(€{p.id})" class="text-gray-500 hover:text-red-600 px-2 py-1"><i class="fa-solid fa-trash"></i></button>
+                        <button onclick="openProductModal(${p.id})" class="text-gray-500 hover:text-indigo-600 px-2 py-1"><i class="fa-solid fa-pen"></i></button>
+                        <button onclick="deleteProduct(${p.id})" class="text-gray-500 hover:text-red-600 px-2 py-1"><i class="fa-solid fa-trash"></i></button>
                     </td>
                 </tr>
             `).join('');
